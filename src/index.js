@@ -4,6 +4,12 @@ import tplGalleryFunc from './templates/tpl_gallery.hbs';
 const basicLightbox = require('basiclightbox');
 import debounce from 'lodash';
 
+import { alert, error, defaultModules } from '@pnotify/core';
+import '@pnotify/core/dist/PNotify.css';
+import * as PNotifyMobile from '@pnotify/mobile';
+import '@pnotify/mobile/dist/PNotifyMobile.css';
+import '@pnotify/core/dist/BrightTheme.css';
+
 // Сcылки єлементов
 
 const refs = {
@@ -21,7 +27,6 @@ const queryOptions = {
 // Создаем запрос
 
 const apiKey = '20298268-ad7854859c2b2dc6e8b44e367';
-
 function fetchGallery(searchQuery, page = 1) {
   const url = `https://pixabay.com/api/?image_type=photo&orientation=horizontal&q=${searchQuery}&page=${page}&per_page=12&key=${apiKey}`;
   const options = {
@@ -30,7 +35,9 @@ function fetchGallery(searchQuery, page = 1) {
       mode: 'no-cors',
     },
   };
-  return fetch(url).then(res => res.json());
+  return fetch(url)
+    .then(res => res.json())
+    .catch(err => messageError(err));
 }
 
 // Обработчик по инпуту
@@ -44,7 +51,10 @@ const Handler = function (event) {
   refs.galleryContainer.innerHTML = '';
 
   const promjson = fetchGallery(queryOptions.query, queryOptions.page);
-  promjson.then(({ hits }) => createGallery(hits));
+  promjson.then(response => {
+    createGallery(response.hits);
+    sentMessage(response);
+  });
 };
 
 refs.searchForm.addEventListener('input', _.debounce(Handler, 1000));
@@ -88,5 +98,20 @@ const onGalleryClick = function (event) {
       .show();
   };
 };
+
+function messageError(err) {
+  error({
+    title: 'Ups!',
+    text: err,
+    delay: 3000,
+  });
+}
+function sentMessage(response) {
+  alert({
+    title: 'Ups!',
+    text: err,
+    delay: 3000,
+  });
+}
 
 refs.galleryContainer.addEventListener('click', onGalleryClick);
