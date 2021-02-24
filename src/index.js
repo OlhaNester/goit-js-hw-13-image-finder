@@ -44,8 +44,8 @@ function fetchGallery(searchQuery, page = 1) {
 // Обработчик по инпуту
 
 const Handler = function (event) {
-  const imputValue = event.target.value;
-  if (imputValue === '') {
+  const imputValue = refs.searchForm[0].value;
+  if (imputValue.trim() === '') {
     messageError("Query musn't be empty");
     return;
   }
