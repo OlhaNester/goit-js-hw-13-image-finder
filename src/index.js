@@ -4,7 +4,7 @@ import tplGalleryFunc from './templates/tpl_gallery.hbs';
 const basicLightbox = require('basiclightbox');
 import debounce from 'lodash';
 
-import { alert, error, defaultModules } from '@pnotify/core';
+import { info, error, defaultModules } from '@pnotify/core';
 import '@pnotify/core/dist/PNotify.css';
 import * as PNotifyMobile from '@pnotify/mobile';
 import '@pnotify/mobile/dist/PNotifyMobile.css';
@@ -53,7 +53,7 @@ const Handler = function (event) {
   const promjson = fetchGallery(queryOptions.query, queryOptions.page);
   promjson.then(response => {
     createGallery(response.hits);
-    sentMessage(response);
+    sentMessage(response.total, response.totalHits);
   });
 };
 
@@ -106,11 +106,11 @@ function messageError(err) {
     delay: 3000,
   });
 }
-function sentMessage(response) {
-  alert({
-    title: 'Ups!',
-    text: err,
-    delay: 3000,
+function sentMessage(resTotal, resTotalTop) {
+  info({
+    title: `It's found ${resTotal} results`,
+    text: `Available ${resTotalTop} results`,
+    delay: 5000,
   });
 }
 
