@@ -44,6 +44,7 @@ function fetchGallery(searchQuery, page = 1) {
 // Обработчик по инпуту
 
 const Handler = function (event) {
+  refs.galleryContainer.innerHTML = '';
   const imputValue = refs.searchForm[0].value;
   if (imputValue.trim() === '') {
     messageError("Query musn't be empty");
@@ -53,7 +54,7 @@ const Handler = function (event) {
   queryOptions.page = 1;
 
   event.preventDefault();
-  refs.galleryContainer.innerHTML = '';
+ 
 
   const promjson = fetchGallery(queryOptions.query, queryOptions.page);
   promjson.then(response => {
