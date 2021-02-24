@@ -2,7 +2,7 @@ import './css/styles.css';
 import '../node_modules/basiclightbox/dist/basicLightbox.min.css';
 import tplGalleryFunc from './templates/tpl_gallery.hbs';
 const basicLightbox = require('basiclightbox');
-import debounce from 'lodash';
+// import debounce from 'lodash';
 
 import { info, error, defaultModules } from '@pnotify/core';
 import '@pnotify/core/dist/PNotify.css';
@@ -15,7 +15,8 @@ import '@pnotify/core/dist/BrightTheme.css';
 const refs = {
   galleryContainer: document.querySelector('.js-gallery'),
   searchForm: document.querySelector('.js-search-form'),
-  loadMoreBtn: document.querySelector('.btn'),
+  searchBtn: document.querySelector('.search'),
+  loadMoreBtn: document.querySelector('.load-more'),
   //   spinner: document.querySelector('#spinner'),
   container: document.querySelector('.container'),
 };
@@ -44,6 +45,10 @@ function fetchGallery(searchQuery, page = 1) {
 
 const Handler = function (event) {
   const imputValue = event.target.value;
+  if (imputValue === '') {
+    messageError("Query musn't be empty");
+    return;
+  }
   queryOptions.query = imputValue;
   queryOptions.page = 1;
 
@@ -57,7 +62,7 @@ const Handler = function (event) {
   });
 };
 
-refs.searchForm.addEventListener('input', _.debounce(Handler, 1000));
+refs.searchBtn.addEventListener('click', Handler);
 
 const createGallery = function (arrGallery) {
   let topPoint =
