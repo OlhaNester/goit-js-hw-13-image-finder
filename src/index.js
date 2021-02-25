@@ -60,7 +60,16 @@ const Handler = function (event) {
   promjson.then(response => {
     createGallery(response.hits);
     sentMessage(response.total, response.totalHits);
-  });
+    if (response.total === 0) {
+      refs.loadMoreBtn.classList.add('is-hidden');
+      messageError("Specify your query");
+    }
+    if (response.totalHits <= 12) {
+      refs.loadMoreBtn.classList.add('is-hidden');
+    }
+    
+  }
+  );
 };
 
 refs.searchBtn.addEventListener('click', Handler);
@@ -84,8 +93,15 @@ const loadMoreFunc = function (event) {
   event.preventDefault();
   queryOptions.page += 1;
   const promjson = fetchGallery(queryOptions.query, queryOptions.page);
-  promjson.then(({ hits }) => createGallery(hits));
-};
+  promjson.then(response => {
+    createGallery(response.hits);
+    if (queryOptions.page === Math.ceil(response.totalHits / 12)) {
+      refs.loadMoreBtn.classList.add('is-hidden');
+    }
+    else refs.loadMoreBtn.classList.remove('is-hidden');
+     
+});
+}
 
 refs.loadMoreBtn.addEventListener('click', loadMoreFunc);
 
@@ -109,7 +125,7 @@ function messageError(err) {
   error({
     title: 'Ups!',
     text: err,
-    delay: 3000,
+    delay: 2000,
   });
 }
 function sentMessage(resTotal, resTotalTop) {
