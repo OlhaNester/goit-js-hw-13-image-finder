@@ -24,12 +24,13 @@ const refs = {
 const queryOptions = {
   query: '',
   page: 1,
+  qOnPage: 12,
 };
 // Создаем запрос
 
 const apiKey = '20298268-ad7854859c2b2dc6e8b44e367';
-function fetchGallery(searchQuery, page = 1) {
-  const url = `https://pixabay.com/api/?image_type=photo&orientation=horizontal&q=${searchQuery}&page=${page}&per_page=12&key=${apiKey}`;
+function fetchGallery(searchQuery, page = 1, qOnPage) {
+  const url = `https://pixabay.com/api/?image_type=photo&orientation=horizontal&q=${searchQuery}&page=${page}&per_page=${qOnPage}&key=${apiKey}`;
   const options = {
     headers: {
       Authorization: apiKey,
@@ -56,7 +57,7 @@ const Handler = function (event) {
   event.preventDefault();
  
 
-  const promjson = fetchGallery(queryOptions.query, queryOptions.page);
+  const promjson = fetchGallery(queryOptions.query, queryOptions.page, queryOptions.qOnPage);
   promjson.then(response => {
     createGallery(response.hits);
     sentMessage(response.total, response.totalHits);
@@ -64,7 +65,7 @@ const Handler = function (event) {
       refs.loadMoreBtn.classList.add('is-hidden');
       messageError("Specify your query");
     }
-    if (response.totalHits <= 12) {
+    if (response.totalHits <= queryOptions.qOnPage) {
       refs.loadMoreBtn.classList.add('is-hidden');
     }
     
@@ -92,10 +93,10 @@ const createGallery = function (arrGallery) {
 const loadMoreFunc = function (event) {
   event.preventDefault();
   queryOptions.page += 1;
-  const promjson = fetchGallery(queryOptions.query, queryOptions.page);
+  const promjson = fetchGallery(queryOptions.query, queryOptions.page, queryOptions.qOnPage);
   promjson.then(response => {
     createGallery(response.hits);
-    if (queryOptions.page === Math.ceil(response.totalHits / 12)) {
+    if (queryOptions.page === Math.ceil(response.totalHits / queryOptions.qOnPage)) {
       refs.loadMoreBtn.classList.add('is-hidden');
     }
     else refs.loadMoreBtn.classList.remove('is-hidden');
