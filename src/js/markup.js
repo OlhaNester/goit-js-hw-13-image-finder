@@ -14,6 +14,6 @@ function createGallery(arrGallery) {
       behavior: 'smooth',
     });
   }
-};
+}
 
 export default createGallery;
